@@ -25,24 +25,18 @@ init(autoreset=True)
 console = Console()
 
 def imprimir_banner():
-    banner = pyfiglet.figlet_format("Z-OSINT PRO", font="small")
+    # Banner en morado/magenta como solicitaste
+    banner = pyfiglet.figlet_format("Z-OSINT", font="small")
     console.print(f"[bold magenta]{banner}[/bold magenta]")
-    console.print("[bold green] v5.1 - Corporate Recon Edition[/bold green]")
-    console.print("[cyan]─────────────────────────────────────────────────────────────────[/cyan]\n")
+    console.print("[bold white] ➔ Advanced Reconnaissance & Threat Intelligence System[/bold white]")
+    console.print("[dim cyan]─────────────────────────────────────────────────────────────────[/dim cyan]\n")
 
 def extraer_nombre_empresa_avanzado(dominio):
-    """
-    Intenta obtener el nombre real de la empresa mediante:
-    1. Scraping del título de su página web (más preciso).
-    2. Análisis inteligente del dominio (fallback).
-    """
-    # 1. Detectar proveedores de correo personal
+    """Scraping del título web para obtener el nombre real de la empresa"""
     proveedores_publicos = ['gmail', 'hotmail', 'outlook', 'yahoo', 'icloud', 'protonmail', 'live']
     nombre_base = dominio.split('.')[0].lower()
-    if nombre_base in proveedores_publicos:
-        return None
+    if nombre_base in proveedores_publicos: return None
 
-    # 2. Intentar Scraping del Título Web (OSINT Real)
     try:
         url = f"https://{dominio}"
         headers = {'User-Agent': 'Mozilla/5.0'}
@@ -50,26 +44,18 @@ def extraer_nombre_empresa_avanzado(dominio):
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
             titulo = soup.title.string if soup.title else ""
-            # Limpiar el título (ej: "Tecsup - Pasión por la tecnología" -> "Tecsup")
             nombre_limpio = re.split(r'[|-]', titulo)[0].strip()
-            if len(nombre_limpio) > 2:
-                return nombre_limpio
-    except:
-        pass
+            if len(nombre_limpio) > 2: return nombre_limpio
+    except: pass
 
-    # 3. Fallback: Lógica de limpieza de dominio avanzada
-    # Eliminar extensiones compuestas (edu.pe, com.mx, etc.)
+    # Fallback
     temp = re.sub(r'\.(com|edu|gob|org|net|mil|co|ac)\.(pe|ar|mx|cl|co|es|uk|br)$', '', dominio)
-    # Eliminar extensiones simples
     temp = re.sub(r'\.(com|net|org|edu|pe|io|ai|biz|info|me|tv|us)$', '', temp)
-    # Si queda algo como 'sub.empresa', tomar 'empresa'
-    resultado = temp.split('.')[-1].capitalize()
-    return resultado
+    return temp.split('.')[-1].capitalize()
 
 def get_whois_info(domain):
     try:
         w = whois.whois(domain)
-        # Intentar obtener la organización oficial del registro Whois
         org = w.org or w.organization
         exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
         return {
@@ -108,16 +94,14 @@ def buscar_con_holehe(email):
     except: return []
 
 def procesar_objetivo(email):
-    console.print(f"\n[bold yellow][*][/bold yellow] Analizando objetivo: [bold cyan]{email}[/bold cyan]...")
+    console.print(f"\n[bold yellow][*][/bold yellow] Targeting: [bold white]{email}[/bold white]")
     dominio = email.split('@')[-1]
 
-    # --- RECONOCIMIENTO CORPORATIVO AVANZADO ---
     empresa_real = extraer_nombre_empresa_avanzado(dominio)
     prefijo = email.split('@')[0]
     nombre_estimado = re.sub(r'[._-]', ' ', prefijo).title()
     nombre_estimado = ''.join([i for i in nombre_estimado if not i.isdigit()]).strip()
 
-    # LinkedIn Smart Dork con Nombre + Empresa Real
     query_empresa = f'"{empresa_real}"' if empresa_real else ""
     query_linkedin = f'https://www.google.com/search?q=site:linkedin.com/in/+"{nombre_estimado.replace(" ","+")}"+{query_empresa}'
 
@@ -128,7 +112,6 @@ def procesar_objetivo(email):
         f_whois = executor.submit(get_whois_info, dominio)
         f_rock = executor.submit(lambda: requests.get(f"https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-email?email={email}").json())
 
-    # --- RECOLECCIÓN ---
     redes = f_holehe.result()
     leaks_data = f_leaks.result()
     leaks = leaks_data.get('sources', []) if leaks_data.get('success') else []
@@ -136,43 +119,41 @@ def procesar_objetivo(email):
     whois_data = f_whois.result()
     malware = f_rock.result().get('stealers', [])
 
-    # --- CORRECCIÓN: FILTRADO DE DATA REDACTED ---
+    # Filtrado de WHOIS
     org_whois = str(whois_data['organizacion'])
     palabras_basura = ['redacted', 'privacy', 'masking', 'gdpr', 'whoisguard', 'protected', 'statutory', 'no declarada']
-    
-    # Si el whois contiene basura de privacidad o es un Error, usamos el nombre extraído de la web
     if any(p in org_whois.lower() for p in palabras_basura) or whois_data['organizacion'] == "Error":
         org_display = empresa_real
     else:
         org_display = whois_data['organizacion']
 
-    # --- RENDERIZADO ---
+    # --- RENDERIZADO PANELES ---
     identidad_table = Table(show_header=False, box=None)
-    identidad_table.add_row("[bold cyan]Nombre Estimado:[/bold cyan]", f"[bold white]{nombre_estimado}[/bold white]")
-    identidad_table.add_row("[bold cyan]Organización:[/bold cyan]", f"[bold yellow]{org_display}[/bold yellow]")
-    identidad_table.add_row("[bold cyan]LinkedIn (Smart):[/bold cyan]", f"[blue]{query_linkedin}[/blue]")
-    console.print(Panel(identidad_table, title="[bold magenta]👤 Inteligencia de Identidad[/bold magenta]", border_style="magenta"))
+    identidad_table.add_row("[bold cyan]Estimated Name:[/bold cyan]", f"[bold white]{nombre_estimado}[/bold white]")
+    identidad_table.add_row("[bold cyan]Organization:[/bold cyan]", f"[bold yellow]{org_display}[/bold yellow]")
+    identidad_table.add_row("[bold cyan]LinkedIn Link:[/bold cyan]", f"[blue]{query_linkedin}[/blue]")
+    console.print(Panel(identidad_table, title="[bold magenta]👤 Identity Intelligence[/bold magenta]", border_style="magenta"))
 
     dns_table = Table(show_header=True, header_style="bold yellow", box=None, expand=True)
-    dns_table.add_column("Servicio")
-    dns_table.add_column("Detalle")
+    dns_table.add_column("Service")
+    dns_table.add_column("Data Detail")
     dns_table.add_row("Registrar", whois_data['registrar'])
-    dns_table.add_row("Expiración", whois_data['expiracion'])
-    dns_table.add_row("SPF Record", f"[white]{dns_sec['spf']}[/white]")
-    dns_table.add_row("DMARC Record", f"[white]{dns_sec['dmarc']}[/white]")
+    dns_table.add_row("Expiration", whois_data['expiracion'])
+    dns_table.add_row("SPF Policy", f"[white]{dns_sec['spf']}[/white]")
+    dns_table.add_row("DMARC Policy", f"[white]{dns_sec['dmarc']}[/white]")
     vuln_style = "bold red" if "Sí" in dns_sec['vulnerable'] else "bold green"
-    dns_table.add_row("Vulnerable Spoofing", f"[{vuln_style}]{dns_sec['vulnerable']}[/{vuln_style}]")
-    console.print(Panel(dns_table, title="[bold yellow]🛡️ Seguridad Corporativa[/bold yellow]", border_style="yellow"))
+    dns_table.add_row("Spoofing Risk", f"[{vuln_style}]{dns_sec['vulnerable']}[/{vuln_style}]")
+    console.print(Panel(dns_table, title="[bold yellow]🛡️ Infrastructure Audit[/bold yellow]", border_style="yellow"))
 
     web_table = Table(show_header=True, header_style="bold green", box=None, expand=True)
-    web_table.add_column("Categoría")
-    web_table.add_column("Hallazgos")
-    web_table.add_row("Cuentas Activas", ", ".join(redes) if redes else "[dim]No detectadas[/dim]")
-    leak_list = ", ".join([f"{s['name']} ({s['date']})" for s in leaks]) if leaks else "Ninguna"
-    web_table.add_row("Breaches (Leaks)", f"[bold red]{leak_list}[/bold red]" if leaks else "[green]Limpio[/green]")
-    malware_info = f"[bold red]ALERTA: {len(malware)} infecciones[/bold red]" if malware else "[green]Sin registros[/green]"
-    web_table.add_row("Infostealer Malware", malware_info)
-    console.print(Panel(web_table, title="[bold green]🌐 Redes & Breaches[/bold green]", border_style="green"))
+    web_table.add_column("Category")
+    web_table.add_column("Findings")
+    web_table.add_row("Active Accounts", ", ".join(redes) if redes else "[dim]No services found[/dim]")
+    leak_list = ", ".join([f"{s['name']} ({s['date']})" for s in leaks]) if leaks else "Clean"
+    web_table.add_row("Data Breaches", f"[bold red]{leak_list}[/bold red]" if leaks else "[green]No leaks found[/green]")
+    malware_info = f"[bold red]ALERTA: {len(malware)} infections[/bold red]" if malware else "[green]No logs found[/green]"
+    web_table.add_row("Infostealer Logs", malware_info)
+    console.print(Panel(web_table, title="[bold green]🌐 Network Exposure[/bold green]", border_style="green"))
 
     # GUARDADO
     reporte = {
@@ -182,7 +163,7 @@ def procesar_objetivo(email):
     filename = f"report_{email.replace('@','_')}.json"
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(reporte, f, indent=4, ensure_ascii=False)
-    console.print(f"\n[bold white on green] ÉXITO [/bold white on green] Reporte generado: [bold]{filename}[/bold]\n")
+    console.print(f"\n[bold white on green] SUCCESS [/bold white on green] Data log saved: [bold]{filename}[/bold]\n")
 
 def main():
     imprimir_banner()
@@ -191,12 +172,11 @@ def main():
         procesar_objetivo(target)
     else:
         try:
-            email = input(Fore.CYAN + "Ingresa el correo: ").strip()
+            email = input(Fore.WHITE + " [" + Fore.MAGENTA + "?" + Fore.WHITE + "] Target Email Address: ").strip()
             if email: procesar_objetivo(email)
         except EOFError: return
 
 if __name__ == '__main__':
-    # Ignorar advertencias de SSL al hacer scraping web
     import urllib3
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     main()

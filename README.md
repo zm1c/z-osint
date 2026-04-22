@@ -1,67 +1,70 @@
-<h1 align="center">🚀 Z-OSINT PRO v5.2</h1>
+<h1 align="center">💜 Z-OSINT</h1>
 
 <p align="center">
-  <b>Advanced Enterprise Intelligence & Corporate Reconnaissance Engine</b>
+  <b>Advanced Reconnaissance & Threat Intelligence System</b>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/OSINT-Professional-red?style=for-the-badge" alt="OSINT">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/Status-Elite_Intelligence-magenta?style=for-the-badge" alt="OSINT">
+  <img src="https://img.shields.io/badge/License-MIT-white?style=for-the-badge" alt="License">
 </p>
 
 <p align="center">
-  <img src="img/tool.png" alt="Z-OSINT PRO Dashboard" width="800"/>
+  <img src="img/tool.png" alt="Z-OSINT Dashboard" width="800"/>
 </p>
 
 ---
 
 ## 🎯 Overview
 
-**Z-OSINT PRO** is an advanced Open Source Intelligence (OSINT) suite designed for cybersecurity auditors, SOC analysts, and Red Teamers. Unlike traditional scanners, this engine combines **DNS infrastructure analysis**, **automated corporate reconnaissance**, and **intelligent identity inference** to transform a simple email address into a comprehensive intelligence profile.
+**Z-OSINT** is a professional-grade Open Source Intelligence (OSINT) suite designed for high-stakes cybersecurity operations. Engineered for auditors, SOC analysts, and Red Teamers, this system moves beyond simple scanning by integrating **automated corporate reconnaissance** and **identity inference** to transform a single email into a tactical intelligence asset.
 
 ---
 
-## 🚀 Key Features
+## 🚀 Key Intelligence Modules
 
-### 🧠 Identity Intelligence Layer
-- **Smart Name Inference:** Deconstructs complex email prefixes (e.g., `apalmal` ➔ `A. Palma`) to deduce real identities.
-- **LinkedIn Smart Dorking:** Generates surgical LinkedIn searches by cross-referencing deduced names with identified corporate entities.
-- **Identity Discovery:** Gravatar integration to extract real names and profile photographs.
+### 👤 Identity Intelligence
+- **Smart Name Inference:** Sophisticated algorithm that deconstructs email prefixes (e.g., `apalmal` ➔ `A. Palma`) to identify real targets.
+- **LinkedIn Smart Dorking:** Automated generation of surgical search queries cross-referencing deduced names with real-time corporate data.
+- **Visual Profiling:** Real-time identity discovery via Gravatar to extract names and high-resolution profile imagery.
 
-### 🏢 Corporate Reconnaissance (Recon)
-- **Auto-Company Recognition:** Identifies the organization through *Web Scraping* of the official site and advanced TLD cleaning (supporting `.edu.pe`, `.com.mx`, `.org.uk`, etc.).
-- **DNS Security Audit:** Real-time analysis of **SPF and DMARC** records to determine vulnerability to *Email Spoofing* and *BEC attacks*.
-- **Infrastructure WHOIS:** Automated identification of registrars and GDPR privacy audit.
+### 🛡️ Corporate Reconnaissance (Recon)
+- **Auto-Organization Identification:** Tactical recognition of companies via *Web Scraping* of official titles and intelligent TLD deconstruction (supporting `.edu.pe`, `.com.mx`, `.org.uk`, etc.).
+- **Infrastructure Audit:** Real-time analysis of **SPF and DMARC** policies to identify Critical Spoofing vulnerabilities and BEC (Business Email Compromise) risks.
+- **WHOIS Forensics:** Automated identification of domain registrars and expiration auditing with advanced "Data Redacted" filtering.
 
-### 🔍 Global Search Engines
-- **Service Enumeration:** Powered by `Holehe` to identify account presence across 120+ platforms (Office365, Twitter/X, etc.).
-- **Threat Intelligence:** Cross-checks for malware-related compromises (Infostealers) via `HudsonRock`.
-- **Data Breach Analysis:** Queries massive data breach repositories via `LeakCheck`.
-
-### 🛡️ Stealth Operations
-- **Batch Processing:** Support for massive reconnaissance via `.txt` target lists.
-- **Anti Rate-Limit:** Randomized delay algorithm to prevent IP banning from WHOIS and search engines.
-- **User-Agent Rotation:** Mimics real-world browser fingerprints to evade basic security detections.
+### 🔍 Global Intelligence Engines
+- **Service Enumeration:** Seamless integration with `Holehe` to map presence across 120+ global platforms (Office365, Twitter/X, LinkedIn, etc.).
+- **Threat Intel:** Direct verification of malware infections (Infostealer Logs) through `HudsonRock` integration.
+- **Exposure Analysis:** Massive data breach auditing via `LeakCheck` repositories.
 
 ---
 
-## 🛠️ Installation
+## 🛡️ Stealth & Professional Design
+
+- **Rich Dashboard UI:** High-definition terminal interface for immediate intelligence consumption.
+- **Stealth Batch Processing:** Massive recon capability with randomized delay algorithms to evade WAFs and Rate-Limits.
+- **Minimalist CLI:** Clean, professional interface designed for seamless operation in SIEM/SOC environments.
+
+---
+
+## Installation
 
 **Clone the repository:**
 ```bash
-git clone https://github.com/zm1c/email-osint.git
-cd email-osint
+git clone https://github.com/zm1c/z-osint.git
+cd z-osint
 ```
+
 ## System Requirements:
 
-Ensure you have the whois system package installed on your Linux machine:
+Ensure the whois package is available on your Linux system:
 ```bash
-sudo apt install whois
+sudo apt update && sudo apt install whois -y
 ```
 
-## 📦 Install dependencies:
-
+## Deploy Dependencies:
 ```bash
 pip install -r requirements.txt
 ```
@@ -70,17 +73,17 @@ pip install -r requirements.txt
 
 **Analyze a single target:**
 ```bash
-python3 z-osint-pro.py target@company.com
+python3 z-osint.py target@company.com
 ```
 
 **Batch Mode (Bulk Scan):**
 Create a targets.txt file with one email per line and run:
 ```bash
-python3 z-osint-pro.py targets.txt
+python3 z-osint.py targets.txt
 ```
 
 ## Reporting
-The tool generates a high-definition visual Dashboard in the terminal using the Rich library. Simultaneously, it exports a structured JSON report for deeper analysis or integration into SIEM platforms like Wazuh.
+Z-OSINT generates an immediate visual report on the dashboard and exports a structured JSON log for every target. These reports are ready for ingestion into SIEM platforms, data lakes, or for inclusion in formal security audit documentation.
 
 ## ⚠️ Disclaimer
 This tool is intended for educational purposes and authorized professional security testing only. Use of this tool against targets without prior written consent is illegal. The author assumes no liability for any misuse or damage caused by this program.
